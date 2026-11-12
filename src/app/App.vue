@@ -8,21 +8,30 @@ import { key } from "../shared/document";
 import { useWorkspace } from "./workspace";
 const {
   session,
-  cursor,
+  time,
+  timeline,
+  total,
+  playback,
+  previewing,
+  battle,
+  actor,
+  walking,
+  popups,
+  focus,
+  path,
+  settled,
+  activeCursor,
   selected,
   skill,
   brush,
   notice,
-  battle,
-  actor,
   locked,
   routes,
   targets,
-  path,
-  playback,
   cell,
   wait,
-  seek,
+  seekStep,
+  seekTime,
   reset,
 } = useWorkspace();
 </script>
@@ -45,7 +54,7 @@ const {
         <p>利用地形，掌握先机。每一次行动，都有迹可循。</p>
       </div>
       <div class="live-badge">
-        <i />{{ cursor < 0 ? "实战指挥" : "历史回放 · 只读"
+        <i />{{ previewing ? "历史回放 · 只读" : "实战指挥"
         }}<small>消灭敌方所有角色获胜</small>
       </div>
     </div>
@@ -73,6 +82,9 @@ const {
           :routes="[...routes.keys()]"
           :targets="targets.map(key)"
           :path="path"
+          :walking="walking"
+          :popups="popups"
+          :focus="focus"
           @cell="cell"
         />
         <div class="field-note">
@@ -95,12 +107,19 @@ const {
           "
           @wait="wait"
         /><ReplayPanel
-          :events="session.events"
-          :cursor="cursor"
+          :steps="timeline.steps"
+          :time="time"
+          :total="total"
+          :speeds="playback.speeds"
+          :speed="playback.speed.value"
           :playing="playback.playing.value"
-          @seek="seek"
-          @play="playback.play(cursor)"
-          @stop="playback.stop"
+          :settled="settled"
+          :active-cursor="activeCursor"
+          @scrub="seekTime"
+          @boundary="seekStep"
+          @live="seekStep(-1)"
+          @toggle="playback.toggle"
+          @speed="playback.setSpeed"
           @download="downloadArchive(session)"
         />
       </aside>

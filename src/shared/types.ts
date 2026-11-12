@@ -48,6 +48,8 @@ export interface Session {
   initial: Battle;
   live: Battle;
   events: BattleEvent[];
+  /** Last explicitly committed replay boundary; -1 means the live battle. */
+  pointer?: number;
 }
 export interface Skill {
   id: string;

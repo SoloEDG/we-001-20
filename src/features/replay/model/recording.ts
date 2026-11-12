@@ -1,5 +1,10 @@
 import type { Battle, EventKind, Point, Session } from "../../../shared/types";
 import { clone } from "../../../shared/document";
+
+/**
+ * Append a committed action. The full before/after snapshots are the source of truth for
+ * every replay frame; playback only reads them and never records new history.
+ */
 export function record(
   s: Session,
   before: Battle,
@@ -16,11 +21,4 @@ export function record(
     before: clone(before),
     after: clone(s.live),
   });
-}
-export function frame(s: Session, cursor: number) {
-  return cursor < 0
-    ? s.live
-    : cursor === 0
-      ? s.initial
-      : s.events[Math.min(cursor, s.events.length) - 1].after;
 }
